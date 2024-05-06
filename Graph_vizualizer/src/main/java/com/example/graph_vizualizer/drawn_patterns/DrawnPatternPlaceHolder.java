@@ -6,6 +6,7 @@ import com.example.graph_vizualizer.graph.Point;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.StackPane;
 
 import java.util.HashMap;
@@ -37,7 +38,9 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
         layout.execute(parent);
 
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        StackPane stackPane = new StackPane(graphComponent);
+        SwingNode swingNode = new SwingNode();
+        swingNode.setContent(graphComponent);
+        pane.getChildren().add(swingNode);
     }
 
     private int getWidth(Point p) {
