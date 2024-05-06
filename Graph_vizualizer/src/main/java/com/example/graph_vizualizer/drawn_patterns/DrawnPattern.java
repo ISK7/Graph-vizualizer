@@ -1,9 +1,10 @@
 package com.example.graph_vizualizer.drawn_patterns;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
+
+import com.example.graph_vizualizer.graph.Graph;
+import javafx.scene.layout.StackPane;
 
 public interface DrawnPattern {
-    public void drawGraph(Canvas canvas, String graph);
+    public void drawGraph(StackPane pane, Graph graph);
     public String getName();
 }

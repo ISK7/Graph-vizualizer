@@ -23,6 +23,15 @@ public class Graph {
             edges.add(new Edge(i));
         }
     }
+
+    public ArrayList<Point> getPoints() {
+        return points;
+    }
+
+    public ArrayList<Edge> getEdges() {
+        return edges;
+    }
+
     public void AddPoint(Point p) {
         points.add(p);
     }

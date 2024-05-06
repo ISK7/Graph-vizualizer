@@ -14,5 +14,17 @@ public class Point {
         aType = p.aType;
         pType = p.pType;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public AType getaType() {
+        return aType;
+    }
+
+    public PType getpType() {
+        return pType;
+    }
 }
 

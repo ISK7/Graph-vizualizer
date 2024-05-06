@@ -9,15 +9,16 @@ public class GraphPatternPlaceHolder implements GraphPattern {
     Graph res;
     public GraphPatternPlaceHolder() {
         res = new Graph();
-        res.AddPoint(new Point("Place", AType.PUBLIC, PType.CLASS));
-        res.AddPoint(new Point("Holder", AType.PUBLIC, PType.STATIC));
-        res.AddEdge(new Edge("Place", "Holder", EType.POSSESSION));
+        Point p = new Point("Place", AType.PUBLIC, PType.CLASS);
+        Point h = new Point("Holder", AType.PUBLIC, PType.STATIC);
+        res.AddPoint(p);
+        res.AddPoint(h);
+        res.AddEdge(new Edge(p, h, EType.POSSESSION));
     }
 
     @Override
-    public String newGraph(File source) {
-        Gson gson = new Gson();
-        return gson.toJson(res);
+    public Graph newGraph(File source) {
+        return res;
     }
     @Override
     public String getName() {
