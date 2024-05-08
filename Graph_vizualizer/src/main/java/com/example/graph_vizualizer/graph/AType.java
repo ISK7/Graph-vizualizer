@@ -4,4 +4,5 @@ public enum AType {
     PUBLIC,
     PROTECTED,
     PRIVATE,
+    DEFAULT
 }

@@ -22,9 +22,9 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <Pane fx:id="draw_pane" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
          <children>
-            <StackPane fx:id="graph_pane" />
+            <AnchorPane fx:id="graph_pane" />
          </children></Pane>
       <VBox prefHeight="100.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
          <children>

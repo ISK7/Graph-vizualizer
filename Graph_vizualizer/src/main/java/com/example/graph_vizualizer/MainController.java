@@ -7,15 +7,13 @@ import com.example.graph_vizualizer.graph_patterns.GraphPattern;
 import com.example.graph_vizualizer.graph_patterns.GraphPatternPlaceHolder;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
@@ -46,7 +44,9 @@ public class MainController implements Initializable {
     @FXML
     Label label_drawn;
     @FXML
-    StackPane graph_pane;
+    AnchorPane graph_pane;
+    @FXML
+    Pane draw_pane;
     @FXML
     Button button_visualize;
 
@@ -74,6 +74,7 @@ public class MainController implements Initializable {
             showMessageDialog(null, "Choose graph pattern!");
             return;
         }
+        graph_pane.getChildren().clear();
         Graph graph = currentGraphPattern.newGraph(folder);
         currentDrawnPattern.drawGraph(graph_pane, graph);
     }
@@ -99,11 +100,16 @@ public class MainController implements Initializable {
             });
             menu_item_drawn_pattern.getItems().add(mI);
         }
-        menu_item_choose.setOnAction(v -> {
-            DirectoryChooser fc = new DirectoryChooser();
-            folder = fc.showDialog(null);
-            label_folder.setText(folder.getAbsolutePath());
-        });
+
+        graph_pane.prefWidthProperty().bind(draw_pane.widthProperty());
+        graph_pane.prefHeightProperty().bind(draw_pane.heightProperty());
+
+        menu_item_choose.setOnAction(v -> onDirectoryChooseClick());
         button_visualize.setOnMouseClicked(v -> visualize());
+    }
+    public void onDirectoryChooseClick() {
+        DirectoryChooser fc = new DirectoryChooser();
+        folder = fc.showDialog(null);
+        label_folder.setText(folder.getAbsolutePath());
     }
 }

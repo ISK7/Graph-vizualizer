@@ -1,7 +1,6 @@
 package com.example.graph_vizualizer.graph_patterns;
 
 import com.example.graph_vizualizer.graph.*;
-import com.google.gson.Gson;
 
 import java.io.File;
 
@@ -13,7 +12,7 @@ public class GraphPatternPlaceHolder implements GraphPattern {
         Point h = new Point("Holder", AType.PUBLIC, PType.STATIC);
         res.AddPoint(p);
         res.AddPoint(h);
-        res.AddEdge(new Edge(p, h, EType.POSSESSION));
+        res.AddEdge(new Edge(p, h, EType.CONTAIN));
     }
 
     @Override
