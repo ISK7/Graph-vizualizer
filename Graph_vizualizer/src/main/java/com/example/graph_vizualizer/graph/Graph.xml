@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:complexType name="Graph">
+        <xs:sequence>
+            <xs:element name="points" type="PointArray"/>
+            <xs:element name="edges" type="EdgeArray"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PointArray">
+        <xs:sequence>
+            <xs:element name="points" type="Point" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EdgeArray">
+        <xs:sequence>
+            <xs:element name="edges" type="Edge" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Edge">
+        <xs:sequence>
+            <xs:element name="input" type="Point"/>
+            <xs:element name="output" type="Point"/>
+            <xs:element  name="type" type="EdgeType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Point">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element  name="pType" type="PointType"/>
+            <xs:element  name="aType" type="AccessType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="PointType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="STATIC"/>
+            <xs:enumeration value="ORDINARY"/>
+            <xs:enumeration value="CLASS"/>
+            <xs:enumeration value="INTERFACE"/>
+            <xs:enumeration value="ENUM"/>
+            <xs:enumeration value="METHOD"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="EdgeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IMPLEMENTS"/>
+            <xs:enumeration value="CONTAIN"/>
+            <xs:enumeration value="EXTENDS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AccessType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PUBLIC"/>
+            <xs:enumeration value="PRIVATE"/>
+            <xs:enumeration value="PROTECTED"/>
+            <xs:enumeration value="DEFAULT"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

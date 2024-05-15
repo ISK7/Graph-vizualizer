@@ -1,12 +1,17 @@
 package com.example.graph_vizualizer.graph;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(propOrder = {"input", "output", "type"})
 public class Edge {
     Point input;
     Point output;
-    EType type;
-    public Edge(Point in, Point out, EType tp) {
-        input = in;
-        output = out;
+    EdgeType type;
+    public Edge(Point from, Point to, EdgeType tp) {
+        input = from;
+        output = to;
         type = tp;
     }
     public Edge(Edge eg) {
@@ -14,17 +19,28 @@ public class Edge {
         output = eg.output;
         type = eg.type;
     }
-
-    public Point getInput() {
-        return input;
+    public Edge() {
+        input = new Point();
+        output = new Point();
+        type = EdgeType.CONTAIN;
     }
 
-    public Point getOutput() {
-        return output;
-    }
+    @XmlIDREF
+    @XmlElement(name = "input")
+    public Point getInput() { return input; }
+    public void setInput(Point input) { this.input = input; }
 
-    public EType getType() {
+    @XmlIDREF
+    @XmlElement(name = "output")
+    public Point getOutput() { return output; }
+    public void setOutput(Point output) { this.output = output; }
+
+    @XmlElement(name = "type")
+    public EdgeType getType() {
         return type;
+    }
+    public void setType(EdgeType type) {
+        this.type = type;
     }
 }
 
