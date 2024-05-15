@@ -9,7 +9,10 @@ module com.example.graph_vizualizer {
     requires java.desktop;
     requires javafx.swing;
     requires com.github.vlsi.mxgraph.jgraphx;
+    requires java.xml.bind;
 
-    opens com.example.graph_vizualizer to javafx.fxml;
+    opens com.example.graph_vizualizer to javafx.fxml, java.xml.bind;
+    opens com.example.graph_vizualizer.graph to java.xml.bind;
     exports com.example.graph_vizualizer;
+    exports com.example.graph_vizualizer.graph to java.xml.bind;
 }

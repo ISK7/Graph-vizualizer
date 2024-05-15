@@ -11,11 +11,15 @@ import com.mxgraph.view.mxGraph;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.AnchorPane;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import java.awt.*;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DrawnPatternPlaceHolder implements DrawnPattern{
+public class DrawnPatternPlaceHolder implements DrawnPattern {
     final private int classHeight = 30;
     final private int classWidth = 60;
     final private int staticHeight = 20;
@@ -31,31 +35,44 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
     final private String extendsColor = "#00FFFF";
     final private String classShapeStr = mxConstants.SHAPE_DOUBLE_RECTANGLE;
     final private String staticShapeStr = mxConstants.SHAPE_RECTANGLE;
-    final private String ordinaryShapeStr = mxConstants.SHAPE_ELLIPSE;
+    final private String ordinaryShapeStr = mxConstants.SHAPE_RECTANGLE;
+    final private String methodShapeStr = mxConstants.SHAPE_ELLIPSE;
     @Override
-    public void drawGraph(AnchorPane pane, Graph sourceGraph) {
+    public boolean drawGraph(AnchorPane pane, byte[] xmlGraph) {
+        Graph sourceGraph;
+        try {
+            JAXBContext context = JAXBContext.newInstance(Graph.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            ByteArrayInputStream bais = new ByteArrayInputStream(xmlGraph);
+            sourceGraph = (Graph) unmarshaller.unmarshal(bais);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
         mxGraph graph = new mxGraph();
         Object parent = graph.getDefaultParent();
 
         Map<Point,Object> poObj = new HashMap<>();
         ArrayList<Object> privateStyle = new ArrayList<>(), protectedStyle = new ArrayList<>(),
                 publicStyle = new ArrayList<>(), defaultStyle = new ArrayList<>(),
-                classShape = new ArrayList<>(), staticShape = new ArrayList<>(), ordinaryShape = new ArrayList<>();
+                classShape = new ArrayList<>(), staticShape = new ArrayList<>(),
+                ordinaryShape = new ArrayList<>(), methodShape = new ArrayList<>();
         for(Point p : sourceGraph.getPoints()) {
             double w = getWidth(p);
             double h = getHeight(p);
             Object obj = graph.insertVertex(parent,null, p.getName(), 0.0, 0.0, w, h);
             poObj.put(p, obj);
             switch (p.getaType()) {
-                case PRIVATE -> {privateStyle.add(obj);}
-                case PROTECTED -> {protectedStyle.add(obj);}
-                case PUBLIC -> {publicStyle.add(obj);}
-                case DEFAULT -> {defaultStyle.add(obj);}
+                case PRIVATE -> privateStyle.add(obj);
+                case PROTECTED -> protectedStyle.add(obj);
+                case PUBLIC -> publicStyle.add(obj);
+                case DEFAULT -> defaultStyle.add(obj);
             }
             switch (p.getpType()) {
-                case CLASS -> classShape.add(obj);
+                case CLASS, INTERFACE, ENUM -> classShape.add(obj);
                 case STATIC -> staticShape.add(obj);
                 case ORDINARY -> ordinaryShape.add(obj);
+                case METHOD -> methodShape.add(obj);
             }
         }
 
@@ -67,6 +84,7 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
         graph.setCellStyles(mxConstants.STYLE_SHAPE, classShapeStr, classShape.toArray());
         graph.setCellStyles(mxConstants.STYLE_SHAPE, staticShapeStr, staticShape.toArray());
         graph.setCellStyles(mxConstants.STYLE_SHAPE, ordinaryShapeStr, ordinaryShape.toArray());
+        graph.setCellStyles(mxConstants.STYLE_SHAPE, methodShapeStr, methodShape.toArray());
 
         for(Edge e : sourceGraph.getEdges()) {
             Object edge = graph.insertEdge(parent,null,getEdgeName(e), poObj.get(e.getInput()), poObj.get(e.getOutput()));
@@ -82,13 +100,23 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
         graphComponent.setEnterStopsCellEditing(false);
         graphComponent.setInvokesStopCellEditing(false);
         SwingNode swingNode = new SwingNode();
-        swingNode.setDisable(true);
+        swingNode.setDisable(false);
         swingNode.setContent(graphComponent);
+        graphComponent.validate();
+        graphComponent.repaint();
         pane.getChildren().add(swingNode);
         pane.setTopAnchor(swingNode,0.0);
         pane.setBottomAnchor(swingNode,0.0);
         pane.setLeftAnchor(swingNode,0.0);
         pane.setRightAnchor(swingNode,0.0);
+        pane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+            swingNode.resize(newValue.getWidth(), newValue.getHeight());
+            graphComponent.setPreferredSize(new Dimension((int) newValue.getWidth(), (int) newValue.getHeight()));
+            graphComponent.revalidate();
+            graphComponent.repaint();
+        });
+        swingNode.setVisible(true);
+        return true;
     }
 
     private String getStyle(Edge e) {
@@ -102,7 +130,7 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
 
     private int getWidth(Point p) {
         switch (p.getpType()) {
-            case CLASS -> {return classWidth;}
+            case CLASS, INTERFACE, ENUM -> {return classWidth;}
             case STATIC -> {return staticWidth;}
             default -> {return ordinaryWidth;}
         }
@@ -110,7 +138,7 @@ public class DrawnPatternPlaceHolder implements DrawnPattern{
 
     private int getHeight(Point p) {
         switch (p.getpType()) {
-            case CLASS -> {return classHeight;}
+            case CLASS, INTERFACE, ENUM -> {return classHeight;}
             case STATIC -> {return staticHeight;}
             default -> {return ordinaryHeight;}
         }

@@ -1,7 +1,11 @@
 package com.example.graph_vizualizer.graph;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlType(propOrder = {"points", "edges"})
 public class Graph {
     ArrayList<Point> points;
     ArrayList<Edge> edges;
@@ -24,18 +28,49 @@ public class Graph {
         }
     }
 
+    @XmlElementWrapper(name = "points")
+    @XmlElement(name = "point")
     public ArrayList<Point> getPoints() {
         return points;
     }
+    public void setPoints(ArrayList<Point> points) { this.points = points; }
 
+    @XmlElementWrapper(name = "edges")
+    @XmlElement(name = "edge")
     public ArrayList<Edge> getEdges() {
         return edges;
     }
+    public void setEdges(ArrayList<Edge> edges) { this.edges = edges; }
 
     public void AddPoint(Point p) {
         points.add(p);
     }
+    public boolean changePoint(Point newP, String name) {
+        for(Point p : points) {
+            if(p.getName().equals(name)) {
+                p = newP;
+                return true;
+            }
+        }
+        return false;
+    }
+    public void pushPoint(Point newP) {
+        String name = newP.getName();
+        for(Point p : points) {
+            if(p.getName().equals(name)) {
+                p = newP;
+                return;
+            }
+        }
+        points.add(newP);
+    }
     public void AddEdge(Edge e) {
         edges.add(e);
+    }
+    public Point findPoint(String name) {
+        for(Point p : points) {
+            if(p.getName().equals(name)) return p;
+        }
+        return null;
     }
 }
