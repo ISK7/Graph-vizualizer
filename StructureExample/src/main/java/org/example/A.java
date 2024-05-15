@@ -1,6 +1,6 @@
 package org.example;
 
-public class A implements I{
+public class A implements I {
     @Override
     public int i() {
         int res = 0;

@@ -76,6 +76,7 @@ public class MainController implements Initializable {
             return;
         }
         graph_pane.getChildren().clear();
+        graph = null;
         graph = currentGraphPattern.newGraph(folder);
         if(graph == null) {
             showMessageDialog(null, "Serialization error!");

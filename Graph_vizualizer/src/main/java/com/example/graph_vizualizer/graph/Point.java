@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = {"name", "pType", "aType"})
+@XmlType(propOrder = {"name", "id", "aType", "pType"})
 public class Point {
     String name;
     AccessType accessType;
@@ -26,7 +26,6 @@ public class Point {
         pointType = PointType.ORDINARY;
     }
 
-    @XmlID
     @XmlAttribute
     public String getName() {
         return name;
@@ -35,7 +34,13 @@ public class Point {
         this.name = name;
     }
 
-    @XmlElement(name = "aType")
+    @XmlID
+    @XmlElement(name = "id")
+    public String getid() {
+        return accessType.toString().concat(name);
+    }
+
+    @XmlAttribute
     public AccessType getaType() {
         return accessType;
     }
@@ -43,7 +48,7 @@ public class Point {
         accessType = type;
     }
 
-    @XmlElement(name = "pType")
+    @XmlAttribute
     public PointType getpType() {
         return pointType;
     }

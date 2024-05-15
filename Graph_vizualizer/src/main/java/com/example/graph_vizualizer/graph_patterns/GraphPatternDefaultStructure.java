@@ -50,11 +50,22 @@ public class GraphPatternDefaultStructure implements GraphPattern {
             Matcher classMatcher = classPattern.matcher(command);
             if (classMatcher.find()) {
                 String accessModifier = classMatcher.group(1);
+                if (accessModifier != null) accessModifier = accessModifier.trim();
                 String classType = classMatcher.group(2);
+                if (classType != null) classType = classType.trim();
                 String className = classMatcher.group(3);
+                if (className != null) className = className.trim();
                 String superClass = classMatcher.group(4);
+                if (superClass != null) superClass = superClass.trim();
                 String implementedInterfacesStr = classMatcher.group(5);
+                if (implementedInterfacesStr != null) {
+                    if(implementedInterfacesStr.lastIndexOf("{") != -1) implementedInterfacesStr = implementedInterfacesStr.replace("{", " ");
+                    implementedInterfacesStr = implementedInterfacesStr.trim();
+                }
                 String[] implementedInterfaces = implementedInterfacesStr != null ? implementedInterfacesStr.split(",\\s*") : new String[0];
+                for (int i = 0; i < implementedInterfaces.length; i++) {
+                    implementedInterfaces[i] = implementedInterfaces[i].trim();
+                }
                 AccessType access = AccessType.DEFAULT;
                 PointType typeOfClass = PointType.CLASS;
                 switch (accessModifier) {
@@ -67,7 +78,7 @@ public class GraphPatternDefaultStructure implements GraphPattern {
                     case "class" : typeOfClass = PointType.CLASS; break;
                     case "enum": {
                         typeOfClass = PointType.ENUM;
-                        res.pushPoint(new Point(className,access,typeOfClass));
+                        res.AddPoint(new Point(className,access,typeOfClass));
                         continue;
                     }
                 }
@@ -75,14 +86,14 @@ public class GraphPatternDefaultStructure implements GraphPattern {
                 currentClass = newClass;
                 res.pushPoint(newClass);
                 if (superClass != null) {
-                    if(res.findPoint(superClass) == null) res.AddPoint(new Point(superClass, AccessType.PUBLIC, PointType.CLASS));
-                    res.AddEdge(new Edge(res.findPoint(superClass), res.findPoint(className), EdgeType.EXTENDS));
+                    if(res.findPoint(superClass, access) == null) res.AddPoint(new Point(superClass, AccessType.PUBLIC, PointType.CLASS));
+                    res.AddEdge(new Edge(res.findPoint(superClass, AccessType.PUBLIC), res.findPoint(className, access), EdgeType.EXTENDS));
                 }
                 if (implementedInterfaces.length > 0) {
                     for(String newInterface : implementedInterfaces) {
-                        if (res.findPoint(newInterface) == null)
+                        if (res.findPoint(newInterface, AccessType.PUBLIC) == null)
                             res.AddPoint(new Point(newInterface, AccessType.PUBLIC, PointType.INTERFACE));
-                        res.AddEdge(new Edge(res.findPoint(newInterface), res.findPoint(className), EdgeType.EXTENDS));
+                        res.AddEdge(new Edge(res.findPoint(newInterface, AccessType.PUBLIC), res.findPoint(className, access), EdgeType.EXTENDS));
                     }
                 }
             }
@@ -102,13 +113,15 @@ public class GraphPatternDefaultStructure implements GraphPattern {
                     }
                 }
                 currentVariable.setName(variableType);
-                if(res.findPoint(currentVariable.getName()) == null) res.AddPoint(currentVariable);
-                res.AddEdge(new Edge(res.findPoint(currentClass.getName()), res.findPoint(currentVariable.getName()), EdgeType.CONTAIN));
+                if(res.findPoint(currentVariable.getName(), currentVariable.getaType()) == null) res.AddPoint(currentVariable);
+                res.AddEdge(new Edge(res.findPoint(currentClass.getName(), currentClass.getaType()),
+                        res.findPoint(currentVariable.getName(), currentVariable.getaType()), EdgeType.CONTAIN));
             }
         }
     }
     @Override
     public byte[] newGraph(File source) {
+        res = new Graph();
         if(source.isFile()) {
             if(getFileExtension(source.getName()).equals("java")) {
                 javaFiles.add(source);

@@ -56,8 +56,9 @@ public class Graph {
     }
     public void pushPoint(Point newP) {
         String name = newP.getName();
+        AccessType access = newP.getaType();
         for(Point p : points) {
-            if(p.getName().equals(name)) {
+            if(p.getName().equals(name) && p.getaType().equals(access)) {
                 p = newP;
                 return;
             }
@@ -67,9 +68,9 @@ public class Graph {
     public void AddEdge(Edge e) {
         edges.add(e);
     }
-    public Point findPoint(String name) {
+    public Point findPoint(String name, AccessType accessType) {
         for(Point p : points) {
-            if(p.getName().equals(name)) return p;
+            if(p.getName().equals(name) && p.getaType().equals(accessType)) return p;
         }
         return null;
     }

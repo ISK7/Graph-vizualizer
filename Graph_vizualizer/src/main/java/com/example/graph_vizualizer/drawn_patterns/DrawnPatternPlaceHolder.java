@@ -101,6 +101,7 @@ public class DrawnPatternPlaceHolder implements DrawnPattern {
         graphComponent.setInvokesStopCellEditing(false);
         SwingNode swingNode = new SwingNode();
         swingNode.setDisable(false);
+        swingNode.setContent(null);
         swingNode.setContent(graphComponent);
         graphComponent.validate();
         graphComponent.repaint();
