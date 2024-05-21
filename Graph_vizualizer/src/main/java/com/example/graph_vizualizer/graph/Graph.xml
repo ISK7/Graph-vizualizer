@@ -28,6 +28,7 @@
         <xs:sequence>
             <xs:element name="name" type="xs:string"/>
             <xs:element  name="pType" type="PointType"/>
+            <xs:element  name="id" type="xs:string"/>
             <xs:element  name="aType" type="AccessType"/>
         </xs:sequence>
     </xs:complexType>

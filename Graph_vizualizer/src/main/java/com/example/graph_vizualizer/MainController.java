@@ -4,7 +4,6 @@ import com.example.graph_vizualizer.drawn_patterns.DrawnPattern;
 import com.example.graph_vizualizer.drawn_patterns.DrawnPatternPlaceHolder;
 import com.example.graph_vizualizer.graph_patterns.GraphPattern;
 import com.example.graph_vizualizer.graph_patterns.GraphPatternDefaultStructure;
-import com.example.graph_vizualizer.graph_patterns.GraphPatternPlaceHolder;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -59,8 +58,6 @@ public class MainController implements Initializable {
     byte[] graph;
     private GraphPattern currentGraphPattern;
     private DrawnPattern currentDrawnPattern;
-    private ArrayList<GraphPattern> graphPatterns;
-    private ArrayList<DrawnPattern> drawnPatterns;
 
     protected void visualize() {
         if (!folder.exists()) {
@@ -76,6 +73,7 @@ public class MainController implements Initializable {
             return;
         }
         graph_pane.getChildren().clear();
+        graph = null;
         graph = currentGraphPattern.newGraph(folder);
         if(graph == null) {
             showMessageDialog(null, "Serialization error!");
@@ -86,8 +84,9 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ArrayList<GraphPattern> graphPatterns;
+        ArrayList<DrawnPattern> drawnPatterns;
         graphPatterns = new ArrayList<>();
-        graphPatterns.add(new GraphPatternPlaceHolder());
         graphPatterns.add(new GraphPatternDefaultStructure());
         for (GraphPattern p : graphPatterns) {
             MenuItem mI = new MenuItem(p.getName());
