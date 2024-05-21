@@ -2,9 +2,6 @@ package com.example.graph_vizualizer.graph_patterns;
 
 import com.example.graph_vizualizer.graph.*;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,8 +43,12 @@ public class GraphPatternDefaultStructure implements GraphPattern {
             e.printStackTrace();
         }
         Point currentClass = new Point("", AccessType.PUBLIC, PointType.CLASS);
+        int clamCount = 0;
         for(String command : commands) {
+            command = command.trim();
+            if(command.contains("//")) command = command.substring(0,command.indexOf("//"));
             Matcher classMatcher = classPattern.matcher(command);
+            clamCount += clamFinder(command);
             if (classMatcher.find()) {
                 String accessModifier = classMatcher.group(1);
                 if (accessModifier != null) accessModifier = accessModifier.trim();
@@ -97,8 +98,9 @@ public class GraphPatternDefaultStructure implements GraphPattern {
                     }
                 }
             }
+
             Matcher variableMatcher = variablePattern.matcher(command);
-            if (variableMatcher.find()) {
+            if (variableMatcher.find() && clamCount == 1) {
                 Point currentVariable = new Point("", AccessType.DEFAULT, PointType.ORDINARY);
                 String modifiersStr = variableMatcher.group(1);
                 String[] modifiers = modifiersStr.trim().split("\\s+");
@@ -119,6 +121,16 @@ public class GraphPatternDefaultStructure implements GraphPattern {
             }
         }
     }
+
+    private int clamFinder(String command) {
+        int res = 0;
+        for(int i = 0; i < command.length(); i++) {
+            if(command.charAt(i) == '{') res++;
+            if(command.charAt(i) == '}') res--;
+        }
+        return res;
+    }
+
     @Override
     public byte[] newGraph(File source) {
         res = new Graph();
@@ -126,13 +138,7 @@ public class GraphPatternDefaultStructure implements GraphPattern {
             if(getFileExtension(source.getName()).equals("java")) {
                 javaFiles.add(source);
             } else if (getFileExtension(source.getName()).equals("xml")) {
-                try {
-                    byte[] fileContent = Files.readAllBytes(Paths.get(source.getAbsolutePath()));
-                    return fileContent;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                return Serializer.readFile(source);
             }
         }
         else {
@@ -142,19 +148,7 @@ public class GraphPatternDefaultStructure implements GraphPattern {
         for(File f : javaFiles) {
             processJavaFile(f);
         }
-        try {
-            return serialize(res);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-    private byte[] serialize(Graph graph)  throws javax.xml.bind.JAXBException {
-        JAXBContext context = JAXBContext.newInstance(Graph.class);
-        Marshaller marshaller = context.createMarshaller();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        marshaller.marshal(graph, baos);
-        return baos.toByteArray();
+        return Serializer.serialize(res);
     }
     @Override
     public String getName() {

@@ -3,6 +3,7 @@ package com.example.graph_vizualizer.drawn_patterns;
 import com.example.graph_vizualizer.graph.Edge;
 import com.example.graph_vizualizer.graph.Graph;
 import com.example.graph_vizualizer.graph.Point;
+import com.example.graph_vizualizer.graph.Serializer;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -11,10 +12,7 @@ import com.mxgraph.view.mxGraph;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.layout.AnchorPane;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,16 +37,8 @@ public class DrawnPatternPlaceHolder implements DrawnPattern {
     final private String methodShapeStr = mxConstants.SHAPE_ELLIPSE;
     @Override
     public boolean drawGraph(AnchorPane pane, byte[] xmlGraph) {
-        Graph sourceGraph;
-        try {
-            JAXBContext context = JAXBContext.newInstance(Graph.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            ByteArrayInputStream bais = new ByteArrayInputStream(xmlGraph);
-            sourceGraph = (Graph) unmarshaller.unmarshal(bais);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        Graph sourceGraph = Serializer.deserialize(xmlGraph);
+        if(sourceGraph == null) return false;
         mxGraph graph = new mxGraph();
         Object parent = graph.getDefaultParent();
 
@@ -156,6 +146,6 @@ public class DrawnPatternPlaceHolder implements DrawnPattern {
 
     @Override
     public String getName() {
-        return "Default_v_1";
+        return "Default visualization 1";
     }
 }
